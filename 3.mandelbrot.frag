@@ -58,19 +58,19 @@ mat2 rotate(float a) {
 	return mat2(c, - s, s, c);
 }
 
-vec2 view(vec2 p, vec2 origin, float scale, float rotate) {
+vec2 view(vec2 p, vec2 origin, float scale, float rot) {
+	scale = 1.0 / scale;
 	
-	return (p / scale + origin / scale);
+	p = mix(origin - scale / 2.0, origin + scale / 2.0, p);
+	return p;
 }
 
 void main() {
-	vec2 p = (gl_FragCoord.xy / u_resolution) * 2.0 - vec2(1.0, 1.0);
-	//p *= rotate(u_time);
+	vec2 p = (gl_FragCoord.xy / u_resolution); // * 2.0 - vec2(1.0, 1.0);
 	
-	float s = (sin(u_time / 4.0) + 1.0) / 2.0;
+	float s = mix(4000.0, 0.2, (abs(cos(u_time / 16.0))));
 	
-	//p = view(p, vec2(1.0, 1.0), 1.0, 0.0);
-	p = view(p, vec2(mix(0.0, 10.0, s), mix(0.0, 13.0, s)), mix(0.5, 30.0, s), 0.0);
+	p = view(p, vec2(0.011, 0.84926), s, 0.0);
 	
 	gl_FragColor = vec4(mandelbrot(p), 1.0);
 }
