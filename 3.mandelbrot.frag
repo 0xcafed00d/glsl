@@ -1,11 +1,11 @@
 #ifdef GL_ES
-precision mediump float;
+precision highp float;
 #endif
 
 uniform vec2 u_resolution;
 uniform float u_time;
 const float PI = 3.14159265359;
-const int MAX_ITER = 80;
+const int MAX_ITER = 70;
 
 vec3 hue(float v) {
 	v += u_time / 4.0;
@@ -68,9 +68,9 @@ vec2 view(vec2 p, vec2 origin, float scale, float rot) {
 void main() {
 	vec2 p = (gl_FragCoord.xy / u_resolution); // * 2.0 - vec2(1.0, 1.0);
 	
-	float s = mix(4000.0, 0.2, (abs(cos(u_time / 16.0))));
+	float s = mix(0.01, 4000.0, pow(fract(u_time / 10.0), 6.0));
 	
-	p = view(p, vec2(0.011, 0.84926), s, 0.0);
+	p = view(p, vec2(0.015, 0.84926), s, 0.0);
 	
 	gl_FragColor = vec4(mandelbrot(p), 1.0);
 }
