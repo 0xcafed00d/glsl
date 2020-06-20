@@ -20,23 +20,15 @@ float positive(float v) {
 	return v;
 }
 
-vec3 hue(float v) {
-	v = mod(v, 1.0);
-	
-	if (v < 0.33333333) {
-		return mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), v * 3.0);
-	}
-	if (v < 0.66666666) {
-		return mix(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 1.0), (v - 0.3333333) * 3.0);
-	}
-	return mix(vec3(0.0, 0.0, 1.0), vec3(1.0, 0.0, 0.0), (v - 0.6666666) * 3.0);
+vec3 hue2rgb(float hue) {
+	return clamp(abs(mod(hue * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
 }
 
 void main() {
 	vec2 p = (gl_FragCoord.xy / u_resolution) * 2.0 - vec2(1.0, 1.0);
 	
 	float a = atan(p.x, p.y) / (2.0 * PI);
-	vec3 rgb = hue(a + u_time / 10.0);
+	vec3 rgb = hue2rgb(a + u_time / 10.0);
 	
 	gl_FragColor = vec4(rgb, length(p)) * step(length(p), 1.0);
 }

@@ -7,17 +7,9 @@ uniform float u_time;
 const float PI = 3.14159265359;
 const int MAX_ITER = 70;
 
-vec3 hue(float v) {
-	v += u_time / 4.0;
-	v = mod(v, 1.0);
-	
-	if (v < 0.33333333) {
-		return mix(vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0), v * 3.0);
-	}
-	if (v < 0.66666666) {
-		return mix(vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 1.0), (v - 0.3333333) * 3.0);
-	}
-	return mix(vec3(0.0, 0.0, 1.0), vec3(1.0, 0.0, 0.0), (v - 0.6666666) * 3.0);
+vec3 hue2rgb(float hue) {
+	hue += fract(u_time / 4.0);
+	return clamp(abs(mod(hue * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
 }
 
 vec3 mandelbrot(vec2 p) {
@@ -49,7 +41,7 @@ vec3 mandelbrot(vec2 p) {
 		return vec3(0.0);
 	}
 	
-	return hue(float(n) / float(MAX_ITER));
+	return hue2rgb(float(n) / float(MAX_ITER));
 }
 
 mat2 rotate(float a) {
@@ -60,7 +52,6 @@ mat2 rotate(float a) {
 
 vec2 view(vec2 p, vec2 origin, float scale, float rot) {
 	scale = 1.0 / scale;
-	
 	p = mix(origin - scale / 2.0, origin + scale / 2.0, p);
 	return p;
 }
@@ -70,7 +61,7 @@ void main() {
 	
 	float s = mix(0.01, 4000.0, pow(fract(u_time / 10.0), 6.0));
 	
-	p = view(p, vec2(0.015, 0.84926), s, 0.0);
+	p = view(p, vec2(0.015, 0.84926), s, u_time / 40.0);
 	
 	gl_FragColor = vec4(mandelbrot(p), 1.0);
 }
